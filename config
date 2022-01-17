@@ -24,7 +24,12 @@ font pango:monospace 8
 
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
 # screen before suspend. Use loginctl lock-session to lock your screen.
-exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+
+#exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+#
+#trying a new i3lock
+set $i3lockwall i3lock -i /home/anni/Pictures/2021-09-16-012658_429x649_scrot.png -t
+
 
 # NetworkManager is the most popular way to manage wireless networks on Linux,
 # and nm-applet is a desktop environment-independent system tray GUI for it.
@@ -158,10 +163,10 @@ mode "resize" {
         bindsym semicolon resize grow width 10 px or 10 ppt
 
         # same bindings, but for the arrow keys
-        bindsym Left resize shrink width 10 px or 10 ppt
-        bindsym Down resize grow height 10 px or 10 ppt
-        bindsym Up resize shrink height 10 px or 10 ppt
-        bindsym Right resize grow width 10 px or 10 ppt
+        bindsym Left resize shrink width 5 px or 5 ppt
+        bindsym Down resize grow height 5 px or 5 ppt
+        bindsym Up resize shrink height 5 px or 5 ppt
+        bindsym Right resize grow width 5 px or 5 ppt
 
         # back to normal: Enter or Escape or $mod+r
         bindsym Return mode "default"
@@ -179,29 +184,41 @@ set $navy #1B1B59
 set $purple1 #362A80
 set $purple2 #805ABF
 set $purple3 #927ce0
+set $purple4 #4A0D67
+set $purple5 #694D75
+set $purple6 #320E3B
+set $purple7 #2A0C32
 set $blue1 #A9DFF9
 set $blue2 #00C4CD
+set $blue3 #1C2541
 set $pink #F498D8
+set $pink2 #EEA0D5
+set $pink3 #E7BBE3
+set $pink4 #F991CC
 
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
         status_command i3blocks -c /home/anni/.config/i3/i3blocks.conf
-        font pango: Font Awesome, sans-serif, semi-bold 600, 13
+        font pango: Font Awesome, Courier New, semi-bold 600, 12
         height 35
 	output eDP-1
+	workspace_min_width 35
+	tray_padding 10
+	
+	#separator_symbol ":|:"
         
         colors{
 	#bar colors
-	background $purple1
+	background $purple4
 	separator $blue1
 	
 	#workspace colors
 	
 	#ws	         border    background    text
-	focused_workspace $navy	$purple3    $white
-	inactive_workspace $purple1 $purple1 $white
+	focused_workspace $purple2	$purple3    $white
+	inactive_workspace $purple2 $purple2 $white
         }
 }
 
@@ -209,26 +226,27 @@ bar {
 bar {
 	status_command i3blocks -c /home/anni/.config/i3/i3blocks-m.conf
 	output HDMI-2
-	font pango: "Oswald",sans-serif, semi-bold, 600, 12
+	font pango: Font Awesome,Courier New, semi-bold, 600, 12
 	height 30
+	workspace_min_width 35
 
 	colors{
 	#bar colors
-	background $purple1
-	separator $blue1
-	
+	background $purple7
+	#separator $blue1
+	statusline $white
 	#workspace colors
 	
 	#ws	         border    background    text
-	focused_workspace $navy	$purple3    $white
-	inactive_workspace $purple1 $purple1 $white
+	focused_workspace $purple2	$purple3    $white
+	inactive_workspace $purple2  $purple2 $white
         }
 
 }
 
 
 #wallpaper
-exec_always feh --bg-scale /home/anni/Downloads/hackerden.jpg
+exec_always feh --bg-scale /home/anni/Downloads/josan-gonzalez-cyber-dojo-v8.jpg
 
 #disable window title bars for i3 gaps
 for_window [class="^.*"] border pixel 0
@@ -246,11 +264,13 @@ bindsym XF86AudioMute amixer sset 'Master' toggle
 bindsym XF86AudioLowerVolume exec amixer sset 'Master' 5%-
 bindsym XF86AudioRaiseVolume exec amixer sset 'Master' 5%+
 
-#turn off HDMI-2 monitor (the main one I use)
-bindsym $mod+m exec --no-startup-id xrandr --output HDMI-2 --off
 
 #turn ON HDMI-2 monitor
-bindsym $mod+Shift+m exec --no-startup-id xrandr --output HDMI-2 --left-of eDP-1
+bindsym $mod+m+t exec  xrandr --output HDMI-2 --mode 2560x1440 --left-of eDP-1
+
+#turn off HDMI-2 monitor (the main one I use)
+bindsym $mod+Shift+m exec --no-startup-id xrandr --output HDMI-2 --off
+
 
 #assigning workspaces to diff monitors
 workspace $ws1 output HDMI-2 eDP-1
@@ -264,18 +284,3 @@ bindsym $mod+Shift+z exec --no-startup-id xss-lock -l /usr/local/bin/xss-lock
 #smart gaps
 smart_gaps on 
 
-#key binding for suspend
-set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (p) shutdown
-mode "$mode_system" {
-    bindsym l exec --no-startup-id i3lock, mode "default"
-    bindsym e exec --no-startup-id i3-msg exit, mode "default"
-    bindsym s exec --no-startup-id systemctl suspend, mode "default"
-    bindsym h exec --no-startup-id systemctl hibernate, mode "default"
-    bindsym r exec --no-startup-id systemctl reboot, mode "default"
-    bindsym p exec --no-startup-id systemctl poweroff, mode "default"
-
-    # back to normal: Enter or Escape
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
-}
-bindsym $mod+Pause mode "$mode_system"
